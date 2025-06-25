@@ -8,23 +8,34 @@
     <style>
         /* Custom CSS Variables - Adjusted for Tailwind's flexibility */
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
+            --bg-primary: #f5f7fa; /* Lighter background */
+            --bg-secondary: #e9ecf0; /* Slightly darker secondary background */
             --bg-card: #ffffff;
-            --text-primary: #1a202c;
-            --text-secondary: #4a5568;
-            --border-color: #e2e8f0;
-            --accent-color: #667eea;
-            --accent-hover: #5a67d8;
-            --table-header: #f7fafc;
-            --table-row-hover: #f1f5f9;
+            /* Light mode color improvements for better readability */
+            --text-primary: #1a202c; /* Darker grey for primary text */
+            --text-secondary: #4a5568; /* Medium grey for secondary text */
+            --border-color: #cbd5e1; /* Clearer light grey border */
+            --accent-color: #4c51bf; /* Deeper accent blue */
+            --accent-hover: #3f45a6; /* Even deeper blue on hover */
+            --table-header: #edf2f7; /* Light grey table header */
+            --table-row-hover: #f7fafc; /* Very light grey on row hover */
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            /* Tag specific colors */
-            --tag-bg: #e2e8f0;
-            --tag-text: #2d3748;
-            --tag-active-bg: var(--accent-color);
+            /* Tag specific colors for light mode - better contrast */
+            --tag-bg: #e0e7ff; /* Light blue background for tags */
+            --tag-text: #3730a3; /* Dark indigo text for tags */
+            --tag-active-bg: var(--accent-color); /* Use main accent for active tag */
             --tag-active-text: #ffffff;
-            --tag-hover-bg: #cbd5e1;
+            --tag-hover-bg: #c7d2fe; /* Lighter blue on hover */
+
+            /* Card Top Line Colors (Light Mode) - Adjusted for better distinction */
+            --card-top-line-total: #4c51bf; /* Indigo */
+            --card-top-line-govt: #22c55e; /* Green */
+            --card-top-line-govt-sf: #d97706; /* Yellow - CHANGED */
+            --card-top-line-private-sf: #ef4444; /* Red */
+
+            /* Download Button Green */
+            --download-button-bg: #10B981; /* A nice green */
+            --download-button-hover-bg: #059669; /* Darker green on hover */
         }
 
         [data-theme="dark"] {
@@ -39,12 +50,22 @@
             --table-header: #334155;
             --table-row-hover: #475569;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            /* Tag specific colors for dark mode */
+            /* Tag specific colors for dark mode (unchanged, as they were okay) */
             --tag-bg: #334155;
             --tag-text: #e2e8f0;
             --tag-active-bg: var(--accent-color);
             --tag-active-text: #ffffff;
             --tag-hover-bg: #475569;
+
+            /* Card Top Line Colors (Dark Mode) - Adjusted for better distinction */
+            --card-top-line-total: #818cf8; /* Light Indigo */
+            --card-top-line-govt: #86efac; /* Light Green */
+            --card-top-line-govt-sf: #fbbf24; /* Yellow - CHANGED */
+            --card-top-line-private-sf: #f87171; /* Light Red */
+
+            /* Download Button Green for Dark Mode */
+            --download-button-bg: #34D399; /* Lighter green for dark mode */
+            --download-button-hover-bg: #10B981; /* Original green for dark mode hover */
         }
 
         body {
@@ -85,26 +106,60 @@
 
         .controls {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Allows items to wrap to next line */
+            gap: 1rem; /* Spacing between all items */
+        }
+
+        /* New rules for specific alignment within controls */
+        .search-box {
+            position: relative;
+            flex-grow: 1; /* Allows search box to take remaining space */
+            flex-basis: auto; /* Let content dictate initial size */
+            min-width: 250px; /* Ensure it's not too small on smaller screens */
+            max-width: 600px; /* Prevent it from getting excessively wide on very large screens */
+        }
+        
+        .action-buttons {
+            display: flex;
             gap: 1rem;
+            align-items: stretch; /* Ensures children have same height */
+        }
+
+        .theme-toggle, .download-container {
+            flex-shrink: 0; /* Prevent these from shrinking */
+            flex-grow: 0; /* Prevent these from growing */
+            width: 150px; /* Fixed width for consistent alignment */
+            justify-content: center; /* Center content within the button */
+        }
+        /* On larger screens, push the toggle and download to the right */
+        @media (min-width: 768px) {
+            .controls {
+                justify-content: flex-start; /* Start from left */
+            }
+            .search-box {
+                max-width: none; /* Allow full growth when flex-grow is 1 */
+            }
+            .action-buttons {
+                margin-left: auto; /* Push the entire button group to the right */
+            }
         }
 
         .theme-toggle {
             background: var(--bg-card);
             border: 2px solid var(--border-color);
             border-radius: 50px;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.75rem; /* Reduced horizontal padding */
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem; /* Slightly reduced gap */
             transition: all 0.3s ease;
             font-weight: 500;
             color: var(--text-primary);
             white-space: nowrap;
+            font-size: 0.95rem; /* Slightly smaller font size */
         }
 
         .theme-toggle:hover {
@@ -113,15 +168,9 @@
             box-shadow: var(--shadow);
         }
 
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-        }
-
         .search-input {
             width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            padding: 0.75rem 1rem 0.75rem 2.5rem; /* Adjusted left padding for icon */
             border: 2px solid var(--border-color);
             border-radius: 50px;
             background: var(--bg-card);
@@ -136,9 +185,15 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .search-input::placeholder {
+            color: var(--text-primary);
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
         .search-icon {
             position: absolute;
-            left: 1rem;
+            left: 1rem; /* Aligned with the padding of the input */
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-secondary);
@@ -154,7 +209,20 @@
 
         .table-wrapper {
             overflow-x: auto;
+            /* Hide vertical scrollbar for most browsers */
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch; /* For iOS Safari */
         }
+        /* Hide scrollbar for Chrome, Safari, Opera */
+        .table-wrapper::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        /* Hide scrollbar for Firefox */
+        .table-wrapper {
+            scrollbar-width: none; /* Firefox */
+        }
+
 
         table {
             width: 100%;
@@ -247,7 +315,38 @@
             border: 1px solid var(--border-color);
             text-align: center;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            padding-top: 2rem;
         }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .stat-card.total-colleges::before {
+            background-color: var(--card-top-line-total);
+        }
+
+        .stat-card.govt-colleges::before {
+            background-color: var(--card-top-line-govt);
+        }
+
+        .stat-card.govt-sf-colleges::before {
+            background-color: var(--card-top-line-govt-sf);
+        }
+
+        .stat-card.private-sf-colleges::before {
+            background-color: var(--card-top-line-private-sf);
+        }
+
 
         .stat-card:hover {
             transform: translateY(-4px);
@@ -257,29 +356,45 @@
         .stat-number {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--accent-color);
             display: block;
+            margin-top: 0.5rem;
         }
 
+        .stat-card.total-colleges .stat-number,
+        .stat-card.total-colleges .stat-label {
+            color: var(--card-top-line-total);
+        }
+        .stat-card.govt-colleges .stat-number,
+        .stat-card.govt-colleges .stat-label {
+            color: var(--card-top-line-govt);
+        }
+        .stat-card.govt-sf-colleges .stat-number,
+        .stat-card.govt-sf-colleges .stat-label {
+            color: var(--card-top-line-govt-sf);
+        }
+        .stat-card.private-sf-colleges .stat-number,
+        .stat-card.private-sf-colleges .stat-label {
+            color: var(--card-top-line-private-sf);
+        }
+
+
         .stat-label {
-            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-top: 0.5rem;
         }
 
-        /* NEW STYLES for tags */
         .filter-sort-group {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
             margin-top: 1rem;
-            justify-content: flex-end; /* Aligns tags to the right */
+            justify-content: flex-end;
             width: 100%;
         }
         
         .filter-tag, .sort-tag {
             padding: 0.6rem 1.2rem;
-            border-radius: 9999px; /* Pill shape */
+            border-radius: 9999px;
             background-color: var(--tag-bg);
             color: var(--tag-text);
             border: 1px solid var(--border-color);
@@ -305,11 +420,18 @@
             box-shadow: var(--shadow);
         }
 
-        /* Responsive adjustments for tags */
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            .action-buttons {
+                margin-left: 0; /* Reset desktop margin */
+                width: 100%; /* Take full width */
+            }
+            .theme-toggle, .download-container {
+                flex-grow: 1; /* Make them equal width */
+                width: 0; /* Allow flex-grow to work correctly */
             }
             .filter-sort-group {
                 justify-content: center;
@@ -320,25 +442,98 @@
                 font-size: 0.9rem;
             }
         }
+
+        .download-container {
+            position: relative;
+            display: inline-block;
+            height: 100%; /* For equal height */
+        }
+
+        .download-button {
+            background: var(--download-button-bg);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%; /* Make button fill container */
+            justify-content: center;
+            height: 100%; /* For equal height */
+        }
+
+        .download-button:hover {
+            background-color: var(--download-button-hover-bg);
+            transform: translateY(-2px);
+        }
+
+        .download-dropdown {
+            position: absolute;
+            background-color: var(--bg-card);
+            min-width: 160px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            z-index: 20; /* Increased z-index to be above the table */
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .download-dropdown.show {
+            display: block;
+        }
+
+        .download-dropdown button {
+            color: var(--text-primary);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+        }
+
+        .download-dropdown button:hover {
+            background-color: var(--bg-secondary);
+        }
     </style>
 </head>
 <body>
     <div class="container fade-in">
         <div class="header">
             <h1>Engineering College Rankings</h1>
-            <p>Colleges with last rank ≥ 18,000 | Admission Analysis</p>
+            <p>KEAM Last Rank Analysis</p>
         </div>
 
         <div class="stats">
-            <div class="stat-card">
+            <div class="stat-card total-colleges">
                 <span class="stat-number" id="totalColleges"></span>
                 <div class="stat-label">Total Colleges</div>
             </div>
-            <div class="stat-card">
-                <span class="stat-number">2</span>
-                <div class="stat-label">Allotment Rounds</div>
+            <div class="stat-card govt-colleges">
+                <span class="stat-number" id="govColleges"></span>
+                <div class="stat-label">Government Colleges</div>
             </div>
-            <!-- Removed the old Categories stat card -->
+            <div class="stat-card govt-sf-colleges">
+                <span class="stat-number" id="govSelfFinancingColleges"></span>
+                <div class="stat-label">Govt. Self-Financing Colleges</div>
+            </div>
+            <div class="stat-card private-sf-colleges">
+                <span class="stat-number" id="privateSelfFinancingColleges"></span>
+                <div class="stat-label">Private Self-Financing Colleges</div>
+            </div>
         </div>
 
         <div class="controls">
@@ -347,21 +542,29 @@
                 <input type="text" class="search-input" id="searchInput" placeholder="Search colleges...">
             </div>
             
-            <button class="theme-toggle" id="themeToggle">
-                <span id="themeIcon">🌙</span>
-                <span id="themeText">Dark Mode</span>
-            </button>
+            <div class="action-buttons">
+                <button class="theme-toggle" id="themeToggle">
+                    <span id="themeIcon">🌙</span>
+                    <span id="themeText">Dark Mode</span>
+                </button>
 
-            <!-- Filter and Sort Tags -->
+                <div class="download-container">
+                    <button class="download-button" id="downloadButton">
+                        Download <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-down"><path d="m7 13 5 5 5-5"/><path d="m7 6 5 5 5-5"/></svg>
+                    </button>
+                    <div class="download-dropdown" id="downloadDropdown">
+                        <button id="downloadExcel">Download as Excel</button>
+                        <button id="downloadPDF">Download as PDF</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="filter-sort-group">
-                <!-- Filter Tags -->
                 <div class="filter-tag active" data-filter="All">All Categories</div>
                 <div class="filter-tag" data-filter="Government">Government</div>
-                <div class="filter-tag" data-filter="Government-Aided">Government-Aided</div>
                 <div class="filter-tag" data-filter="Government Self-Financing">Government Self-Financing</div>
                 <div class="filter-tag" data-filter="Private Self-Financing">Private Self-Financing</div>
 
-                <!-- Sort Tag -->
                 <div class="sort-tag" data-sort="1st_gen_asc" id="sortRankTag">Sort by Rank (Low to High)</div>
             </div>
         </div>
@@ -384,258 +587,245 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- College data will be injected here by JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgeiVW+BCIMVLiJ_i9wClEYAlU8l9MbAcLLOI9xBtjLxQA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf-autotable.min.js" integrity="sha512-lAUA3IOBbpnC5u/vJ1uA2i/C/O2Nn/VpGpiX2x31SjU3s3SkCj5cdQ42vT1x509/5v/0s695/kHId6qfLsyPQ==" crossorigin="anonymous"></script>
+
     <script>
-        // Theme toggle functionality (unchanged)
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const themeText = document.getElementById('themeText');
-        const body = document.body;
+        // WRAPPING THE ENTIRE SCRIPT IN A 'LOAD' EVENT LISTENER TO PREVENT RACE CONDITIONS
+        window.addEventListener('load', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const body = document.body;
 
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        body.setAttribute('data-theme', currentTheme);
-        updateThemeUI(currentTheme);
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.setAttribute('data-theme', currentTheme);
+            updateThemeUI(currentTheme);
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeUI(newTheme);
-        });
-
-        function updateThemeUI(theme) {
-            if (theme === 'dark') {
-                themeIcon.textContent = '☀️';
-                themeText.textContent = 'Light Mode';
-            } else {
-                themeIcon.textContent = '🌙';
-                themeText.textContent = 'Dark Mode';
-            }
-        }
-
-        // --- COLLEGE DATA ---
-        // Explicitly defining college data with corrected names and categories
-        const collegesData = [
-            { slNo: 1, name: "COE ADOOR [ADR]", '1st_gen': "13,491", '1st_ews': "18,186", '2nd_gen': "14,802", '2nd_ews': "22,067", category: "Government Self-Financing" },
-            { slNo: 2, name: "COE ATTINGAL [CEA]", '1st_gen': "19,093", '1st_ews': "24,818", '2nd_gen': "21,363", '2nd_ews': "25,000", category: "Government Self-Financing" },
-            { slNo: 3, name: "COE CHERTHALA [CEC]", '1st_gen': "17,005", '1st_ews': "24,303", '2nd_gen': "17,973", '2nd_ews': "27,673", category: "Government Self-Financing" },
-            { slNo: 4, name: "COE MUTTATHARA TVM [CEM]", '1st_gen': "21,116", '1st_ews': "25,619", '2nd_gen': "23,112", '2nd_ews': "29K", category: "Government Self-Financing" },
-            { slNo: 5, name: "COE KIDANGOOR KOTTAYAM [KGR]", '1st_gen': "19,133", '1st_ews': "25,558", '2nd_gen': "19,892", '2nd_ews': "27,213", category: "Government Self-Financing" },
-            { slNo: 6, name: "COE KARUNAGAPALLY KOLLAM [KNP]", '1st_gen': "22,366", '1st_ews': "28,743", '2nd_gen': "23,112", '2nd_ews': "34.7K", category: "Government Self-Financing" },
-            { slNo: 7, name: "LBS KASARGOD", '1st_gen': "13,895", '1st_ews': "19,431", '2nd_gen': "15,270", '2nd_ews': "22,436", category: "Government Self-Financing" }, // LBS is a self-financing govt institution
-            { slNo: 8, name: "COE MUNNAR [MNR]", '1st_gen': "19,940", '1st_ews': "30,341", '2nd_gen': "24K", '2nd_ews': "33K", category: "Government Self-Financing" },
-            { slNo: 9, name: "COE PERUMON KOLLAM [PRN]", '1st_gen': "13,698", '1st_ews': "20,114", '2nd_gen': "15,122", '2nd_ews': "21,923", category: "Government Self-Financing" },
-            { slNo: 10, name: "COE KALLOOPPARA THIRUVALLA [PTA]", '1st_gen': "18,963", '1st_ews': "24,185", '2nd_gen': "21,065", '2nd_ews': "25,643", category: "Government Self-Financing" },
-            { slNo: 11, name: "COE TRIKARIPUR [TKR]", '1st_gen': "18,043", '1st_ews': "22,381", '2nd_gen': "18,112", '2nd_ews': "22.9K", category: "Government Self-Financing" },
-            { slNo: 12, name: "COE THALASSERY KANNUR [TLY]", '1st_gen': "13,491", '1st_ews': "23,162", '2nd_gen': "18,114", '2nd_ews': "23.9K", category: "Government Self-Financing" },
-            { slNo: 13, name: "UNIVERSITY COE KARIVATTOOR [TVM]", '1st_gen': "15,006", '1st_ews': "22,393", '2nd_gen': "16,313", '2nd_ews': "24.4K", category: "Government Self-Financing" },
-            { slNo: 14, name: "COE VADAKARA [VDA]", '1st_gen': "14,876", '1st_ews': "27,526", '2nd_gen': "15,713", '2nd_ews': "27.5K", category: "Government Self-Financing" },
-            { slNo: 15, name: "ADI SHANKARA [ASJ]", '1st_gen': "15,941", '1st_ews': "23,439", '2nd_gen': "16,679", '2nd_ews': "23,534", category: "Private Self-Financing" },
-            { slNo: 16, name: "JYOTHI ENGG. COLLEGE, CHERUKKAD, THRISSUR [JCE]", '1st_gen': "19,176", '1st_ews': "-", '2nd_gen': "21,443", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 17, name: "MBITS [MBI]", '1st_gen': "29,380", '1st_ews': "-", '2nd_gen': "33,252", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 18, name: "MARIAN ENGG. COLLEGE TVM [MLE]", '1st_gen': "21,527", '1st_ews': "-", '2nd_gen': "24,470", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 19, name: "MEA ENGG. COLLEGE VENGOOR [MEA]", '1st_gen': "20,701", '1st_ews': "-", '2nd_gen': "22,928", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 20, name: "SCMS College of Engineering - [SCM]", '1st_gen': "15,233", '1st_ews': "26,063", '2nd_gen': "16,645", '2nd_ews': "27,077", category: "Private Self-Financing" },
-            { slNo: 21, name: "SAHRDAYA COE THRISSUR [SHR]", '1st_gen': "19,956", '1st_ews': "-", '2nd_gen': "24,494", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 22, name: "TocH [TOC]", '1st_gen': "18,126", '1st_ews': "32,482", '2nd_gen': "19,857", '2nd_ews': "36,990", category: "Private Self-Financing" },
-            { slNo: 23, name: "VIMAL JYOTHI [VML]", '1st_gen': "25,527", '1st_ews': "-", '2nd_gen': "27,318", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 24, name: "GEC IDUKKI [IDK]", '1st_gen': "2,271", '1st_ews': "13,697", '2nd_gen': "-", '2nd_ews': "17,176", category: "Government" },
-            { slNo: 25, name: "GEC WAYANAD", '1st_gen': "-", '1st_ews': "14,163", '2nd_gen': "-", '2nd_ews': "17,169", category: "Government" },
-            { slNo: 26, name: "AMAL JYOTHI, KOTTAYAM", '1st_gen': "16,854", '1st_ews': "-", '2nd_gen': "19,141", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 27, name: "VISWAJYOTHI [VJC]", '1st_gen': "16,412", '1st_ews': "-", '2nd_gen': "18,557", '2nd_ews': "-", category: "Private Self-Financing" },
-            { slNo: 28, name: "ST. JOSEPHS PALAI [SJC]", '1st_gen': "15,831", '1st_ews': "-", '2nd_gen': "16,325", '2nd_ews': "-", category: "Private Self-Financing" }
-        ];
-
-        const collegeTableBody = document.querySelector('#collegeTable tbody');
-        const searchInput = document.getElementById('searchInput');
-        const totalCollegesSpan = document.getElementById('totalColleges');
-        const filterTags = document.querySelectorAll('.filter-tag');
-        const sortRankTag = document.getElementById('sortRankTag');
-
-        let activeFilters = ["All"]; // "All" is active by default
-        let currentSort = "none"; // "none" is default, or "1st_gen_asc"
-
-        // Helper function to parse rank strings to numbers
-        function parseRank(rankStr) {
-            if (rankStr === "-" || rankStr === null || rankStr === undefined) {
-                return Infinity; // Treat as very high rank for sorting
-            }
-            return parseFloat(rankStr.toString().replace(/,/g, '').replace(/K/g, '000'));
-        }
-
-        // Function to render the table rows
-        function renderTable(collegesToDisplay) {
-            collegeTableBody.innerHTML = ''; // Clear existing rows
-            let visibleCount = 0;
-
-            if (collegesToDisplay.length === 0) {
-                const noDataRow = document.createElement('tr');
-                noDataRow.innerHTML = `<td colspan="6" class="no-data" style="text-align: center;">No colleges found matching your criteria.</td>`;
-                collegeTableBody.appendChild(noDataRow);
-            } else {
-                collegesToDisplay.forEach((college, index) => {
-                    const row = document.createElement('tr');
-                    // Add "note" span for ST. JOSEPHS PALAI
-                    const collegeNameHtml = college.name === "ST. JOSEPHS PALAI [SJC]" 
-                        ? `<span class="college-name">${college.name}</span> <span class="note">Not Confirmed</span>`
-                        : `<span class="college-name">${college.name}</span>`;
-
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${collegeNameHtml}</td>
-                        <td class="rank">${college['1st_gen']}</td>
-                        <td class="rank">${college['1st_ews']}</td>
-                        <td class="rank">${college['2nd_gen']}</td>
-                        <td class="rank">${college['2nd_ews']}</td>
-                    `;
-                    collegeTableBody.appendChild(row);
-                    visibleCount++;
-                });
-            }
-            totalCollegesSpan.textContent = visibleCount;
-        }
-
-        // Function to filter colleges based on search term and selected categories
-        function filterColleges(data) {
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            return data.filter(college => {
-                const matchesSearch = college.name.toLowerCase().includes(searchTerm);
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 
-                if (activeFilters.includes("All")) {
-                    return matchesSearch;
-                } else {
-                    return matchesSearch && activeFilters.includes(college.category);
-                }
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeUI(newTheme);
             });
-        }
 
-        // Function to sort colleges
-        function sortColleges(data, sortBy) {
-            const sortedData = [...data]; // Create a shallow copy to avoid modifying original array
+            function updateThemeUI(theme) {
+                if (theme === 'dark') {
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Dark Mode';
+                }
+            }
 
-            if (sortBy === '1st_gen_asc') {
-                sortedData.sort((a, b) => {
-                    const rankA = parseRank(a['1st_gen']);
-                    const rankB = parseRank(b['1st_gen']);
-                    return rankA - rankB; // Ascending order
+            // --- COLLEGE DATA ---
+            const collegesData = [
+                { slNo: 1, name: "COE ADOOR [ADR]", '1st_gen': "13,491", '1st_ews': "18,186", '2nd_gen': "14,802", '2nd_ews': "22,067", category: "Government Self-Financing" },
+                { slNo: 2, name: "COE ATTINGAL [CEA]", '1st_gen': "19,093", '1st_ews': "24,818", '2nd_gen': "21,363", '2nd_ews': "25,000", category: "Government Self-Financing" },
+                { slNo: 3, name: "COE CHERTHALA [CEC]", '1st_gen': "17,005", '1st_ews': "24,303", '2nd_gen': "17,973", '2nd_ews': "27,673", category: "Government Self-Financing" },
+                { slNo: 4, name: "COE MUTTATHARA TVM [CEM]", '1st_gen': "21,116", '1st_ews': "25,619", '2nd_gen': "23,112", '2nd_ews': "29K", category: "Government Self-Financing" },
+                { slNo: 5, name: "COE KIDANGOOR KOTTAYAM [KGR]", '1st_gen': "19,133", '1st_ews': "25,558", '2nd_gen': "19,892", '2nd_ews': "27,213", category: "Government Self-Financing" },
+                { slNo: 6, name: "COE KARUNAGAPALLY KOLLAM [KNP]", '1st_gen': "22,366", '1st_ews': "28,743", '2nd_gen': "23,112", '2nd_ews': "34.7K", category: "Government Self-Financing" },
+                { slNo: 7, name: "LBS KASARGOD", '1st_gen': "13,895", '1st_ews': "19,431", '2nd_gen': "15,270", '2nd_ews': "22,436", category: "Government Self-Financing" },
+                { slNo: 8, name: "COE MUNNAR [MNR]", '1st_gen': "19,940", '1st_ews': "30,341", '2nd_gen': "24K", '2nd_ews': "33K", category: "Government Self-Financing" },
+                { slNo: 9, name: "COE PERUMON KOLLAM [PRN]", '1st_gen': "13,698", '1st_ews': "20,114", '2nd_gen': "15,122", '2nd_ews': "21,923", category: "Government Self-Financing" },
+                { slNo: 10, name: "COE KALLOOPPARA THIRUVALLA [PTA]", '1st_gen': "18,963", '1st_ews': "24,185", '2nd_gen': "21,065", '2nd_ews': "25,643", category: "Government Self-Financing" },
+                { slNo: 11, name: "COE TRIKARIPUR [TKR]", '1st_gen': "18,043", '1st_ews': "22,381", '2nd_gen': "18,112", '2nd_ews': "22.9K", category: "Government Self-Financing" },
+                { slNo: 12, name: "COE THALASSERY KANNUR [TLY]", '1st_gen': "13,491", '1st_ews': "23,162", '2nd_gen': "18,114", '2nd_ews': "23.9K", category: "Government Self-Financing" },
+                { slNo: 13, name: "UNIVERSITY COE KARIVATTOOR [TVM]", '1st_gen': "15,006", '1st_ews': "22,393", '2nd_gen': "16,313", '2nd_ews': "24.4K", category: "Government Self-Financing" },
+                { slNo: 14, name: "COE VADAKARA [VDA]", '1st_gen': "14,876", '1st_ews': "27,526", '2nd_gen': "15,713", '2nd_ews': "27.5K", category: "Government Self-Financing" },
+                { slNo: 15, name: "ADI SHANKARA [ASJ]", '1st_gen': "15,941", '1st_ews': "23,439", '2nd_gen': "16,679", '2nd_ews': "23,534", category: "Private Self-Financing" },
+                { slNo: 16, name: "JYOTHI ENGG. COLLEGE, CHERUKKAD, THRISSUR [JCE]", '1st_gen': "19,176", '1st_ews': "-", '2nd_gen': "21,443", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 17, name: "MBITS [MBI]", '1st_gen': "29,380", '1st_ews': "-", '2nd_gen': "33,252", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 18, name: "MARIAN ENGG. COLLEGE TVM [MLE]", '1st_gen': "21,527", '1st_ews': "-", '2nd_gen': "24,470", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 19, name: "MEA ENGG. COLLEGE VENGOOR [MEA]", '1st_gen': "20,701", '1st_ews': "-", '2nd_gen': "22,928", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 20, name: "SCMS College of Engineering - [SCM]", '1st_gen': "15,233", '1st_ews': "26,063", '2nd_gen': "16,645", '2nd_ews': "27,077", category: "Private Self-Financing" },
+                { slNo: 21, name: "SAHRDAYA COE THRISSUR [SHR]", '1st_gen': "19,956", '1st_ews': "-", '2nd_gen': "24,494", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 22, name: "TocH [TOC]", '1st_gen': "18,126", '1st_ews': "32,482", '2nd_gen': "19,857", '2nd_ews': "36,990", category: "Private Self-Financing" },
+                { slNo: 23, name: "VIMAL JYOTHI [VML]", '1st_gen': "25,527", '1st_ews': "-", '2nd_gen': "27,318", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 24, name: "GEC IDUKKI [IDK]", '1st_gen': "2,271", '1st_ews': "13,697", '2nd_gen': "-", '2nd_ews': "17,176", category: "Government" },
+                { slNo: 25, name: "GEC WAYANAD [WYD]", '1st_gen': "-", '1st_ews': "14,163", '2nd_gen': "-", '2nd_ews': "17,169", category: "Government" },
+                { slNo: 26, name: "AMAL JYOTHI, KOTTAYAM", '1st_gen': "16,854", '1st_ews': "-", '2nd_gen': "19,141", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 27, name: "VISWAJYOTHI [VJC]", '1st_gen': "16,412", '1st_ews': "-", '2nd_gen': "18,557", '2nd_ews': "-", category: "Private Self-Financing" },
+                { slNo: 28, name: "ST. JOSEPHS PALAI [SJC]", '1st_gen': "15,831", '1st_ews': "-", '2nd_gen': "16,325", '2nd_ews': "-", category: "Private Self-Financing" }
+            ];
+
+            const collegeTableBody = document.querySelector('#collegeTable tbody');
+            const searchInput = document.getElementById('searchInput');
+            const totalCollegesSpan = document.getElementById('totalColleges');
+            const filterTags = document.querySelectorAll('.filter-tag');
+            const sortRankTag = document.getElementById('sortRankTag');
+            const govCollegesSpan = document.getElementById('govColleges');
+            const govSelfFinancingCollegesSpan = document.getElementById('govSelfFinancingColleges');
+            const privateSelfFinancingCollegesSpan = document.getElementById('privateSelfFinancingColleges');
+            let activeCategoryFilter = "All";
+            let currentSort = "none";
+
+            function parseRank(rankStr) {
+                if (rankStr === "-" || rankStr === null || rankStr === undefined) return Infinity;
+                return parseFloat(rankStr.toString().replace(/,/g, '').replace(/K/g, '000'));
+            }
+
+            function renderTable(collegesToDisplay) {
+                collegeTableBody.innerHTML = '';
+                if (collegesToDisplay.length === 0) {
+                    const noDataRow = document.createElement('tr');
+                    noDataRow.innerHTML = `<td colspan="6" class="no-data" style="text-align: center;">No colleges found matching your criteria.</td>`;
+                    collegeTableBody.appendChild(noDataRow);
+                } else {
+                    collegesToDisplay.forEach((college, index) => {
+                        const row = document.createElement('tr');
+                        const collegeNameHtml = college.name === "ST. JOSEPHS PALAI [SJC]" 
+                            ? `<span class="college-name">${college.name}</span> <span class="note">Not Confirmed</span>`
+                            : `<span class="college-name">${college.name}</span>`;
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${collegeNameHtml}</td>
+                            <td class="rank">${college['1st_gen']}</td>
+                            <td class="rank">${college['1st_ews']}</td>
+                            <td class="rank">${college['2nd_gen']}</td>
+                            <td class="rank">${college['2nd_ews']}</td>
+                        `;
+                        collegeTableBody.appendChild(row);
+                    });
+                }
+            }
+
+            function updateStatCards() {
+                const currentFilteredData = filterColleges(collegesData);
+                totalCollegesSpan.textContent = currentFilteredData.length;
+                govCollegesSpan.textContent = currentFilteredData.filter(c => c.category === "Government").length;
+                govSelfFinancingCollegesSpan.textContent = currentFilteredData.filter(c => c.category === "Government Self-Financing").length;
+                privateSelfFinancingCollegesSpan.textContent = currentFilteredData.filter(c => c.category === "Private Self-Financing").length;
+            }
+
+            function filterColleges(data) {
+                const searchTerm = searchInput.value.toLowerCase();
+                return data.filter(college => {
+                    const matchesSearch = college.name.toLowerCase().includes(searchTerm);
+                    if (activeCategoryFilter === "All") return matchesSearch;
+                    return matchesSearch && college.category === activeCategoryFilter;
                 });
             }
-            // Add more sorting logic here if needed
-            return sortedData;
-        }
 
-        // Main function to apply filters, sort, and render
-        function filterAndSortAndRender() {
-            let filtered = filterColleges(collegesData);
-            let sorted = sortColleges(filtered, currentSort);
-            renderTable(sorted);
-        }
+            function sortColleges(data, sortBy) {
+                const sortedData = [...data];
+                if (sortBy === '1st_gen_asc') {
+                    sortedData.sort((a, b) => parseRank(a['1st_gen']) - parseRank(b['1st_gen']));
+                }
+                return sortedData;
+            }
 
-        // Event Listeners for Filters (Tags)
-        filterTags.forEach(tag => {
-            tag.addEventListener('click', () => {
-                const filterValue = tag.dataset.filter;
+            function filterAndSortAndRender() {
+                let filtered = filterColleges(collegesData);
+                let sorted = sortColleges(filtered, currentSort);
+                renderTable(sorted);
+                updateStatCards();
+            }
 
-                if (filterValue === "All") {
-                    // If "All" is clicked, activate only "All" and deactivate others
-                    activeFilters = ["All"];
-                    filterTags.forEach(t => t.classList.remove('active'));
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
                     tag.classList.add('active');
+                    activeCategoryFilter = tag.dataset.filter;
+                    filterAndSortAndRender();
+                });
+            });
+
+            sortRankTag.addEventListener('click', () => {
+                if (currentSort === "1st_gen_asc") {
+                    currentSort = "none";
+                    sortRankTag.classList.remove('active');
+                    sortRankTag.textContent = 'Sort by Rank (Low to High)';
                 } else {
-                    // If another filter is clicked
-                    if (activeFilters.includes("All")) {
-                        // If "All" was active, deactivate it and start with current filter
-                        activeFilters = [filterValue];
-                        document.querySelector('.filter-tag[data-filter="All"]').classList.remove('active');
-                    } else if (activeFilters.includes(filterValue)) {
-                        // If filter is already active, deactivate it
-                        activeFilters = activeFilters.filter(f => f !== filterValue);
-                    } else {
-                        // If filter is not active, activate it
-                        activeFilters.push(filterValue);
-                    }
-
-                    // If no filters are active (except "All" after deactivating it), activate "All"
-                    if (activeFilters.length === 0) {
-                        activeFilters = ["All"];
-                        document.querySelector('.filter-tag[data-filter="All"]').classList.add('active');
-                    }
-
-                    // Update UI for all filter tags
-                    filterTags.forEach(t => {
-                        if (activeFilters.includes(t.dataset.filter)) {
-                            t.classList.add('active');
-                        } else {
-                            t.classList.remove('active');
-                        }
-                    });
+                    currentSort = "1st_gen_asc";
+                    sortRankTag.classList.add('active');
+                    sortRankTag.textContent = 'Sort by Rank (High to Low)';
                 }
                 filterAndSortAndRender();
             });
-        });
 
-        // Event Listener for Sort (Tag)
-        sortRankTag.addEventListener('click', () => {
-            if (currentSort === "1st_gen_asc") {
-                currentSort = "none"; // Deactivate sort
-                sortRankTag.classList.remove('active');
-            } else {
-                currentSort = "1st_gen_asc"; // Activate sort
-                sortRankTag.classList.add('active');
-            }
-            filterAndSortAndRender();
-        });
+            searchInput.addEventListener('input', filterAndSortAndRender);
 
-        // Event Listener for Search Input
-        searchInput.addEventListener('input', filterAndSortAndRender);
+            const downloadButton = document.getElementById('downloadButton');
+            const downloadDropdown = document.getElementById('downloadDropdown');
+            const downloadExcelButton = document.getElementById('downloadExcel');
+            const downloadPDFButton = document.getElementById('downloadPDF');
 
-        // Initial render on page load
-        filterAndSortAndRender();
+            downloadButton.addEventListener('click', (event) => {
+                downloadDropdown.classList.toggle('show');
+                event.stopPropagation();
+            });
 
-        // Add smooth scrolling and animation observers (unchanged, but added observeTableRows call after render)
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+            document.addEventListener('click', (event) => {
+                if (!downloadDropdown.contains(event.target) && !downloadButton.contains(event.target)) {
+                    downloadDropdown.classList.remove('show');
                 }
             });
-        }, observerOptions);
 
-        function observeTableRows() {
-            // Stop observing old rows if any
-            observer.disconnect();
-            Array.from(collegeTableBody.getElementsByTagName('tr')).forEach(row => {
-                row.style.opacity = '0';
-                row.style.transform = 'translateY(20px)';
-                row.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(row);
+            downloadExcelButton.addEventListener('click', () => {
+                const collegesToExport = sortColleges(filterColleges(collegesData), currentSort);
+                let csvContent = "Sl.No,College,1st Allotment (GEN),1st Allotment (EWS),2nd Allotment (GEN),2nd Allotment (EWS)\n";
+                collegesToExport.forEach((college, index) => {
+                    csvContent += `${index + 1},"${college.name.replace(/"/g, '""')}",${college['1st_gen']},${college['1st_ews']},${college['2nd_gen']},${college['2nd_ews']}\n`;
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'KEAM_College_Ranks.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                downloadDropdown.classList.remove('show');
             });
-        }
-        // Re-observe rows after any filter/sort/search operation
-        const originalRenderTable = renderTable;
-        renderTable = function(collegesToDisplay) {
-            originalRenderTable(collegesToDisplay);
-            observeTableRows(); // Call observer after table is rendered
-        };
-
-        // Call initial render again to ensure new observer logic is applied
-        filterAndSortAndRender();
-
+            
+            downloadPDFButton.addEventListener('click', () => {
+                if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF.autoTable === 'undefined') {
+                    alert('PDF generation library could not be loaded. Please check your internet connection and try again.');
+                    downloadDropdown.classList.remove('show');
+                    return;
+                }
+                const { jsPDF } = jspdf;
+                const doc = new jsPDF();
+                const collegesToExport = sortColleges(filterColleges(collegesData), currentSort);
+                const tableBody = collegesToExport.map((college, index) => [
+                    index + 1,
+                    college.name,
+                    college['1st_gen'],
+                    college['1st_ews'],
+                    college['2nd_gen'],
+                    college['2nd_ews']
+                ]);
+                doc.setFontSize(18);
+                doc.text("Engineering College Rankings - KEAM", 14, 22);
+                doc.autoTable({
+                    head: [['Sl.No', 'College', '1st GEN', '1st EWS', '2nd GEN', '2nd EWS']],
+                    body: tableBody,
+                    startY: 30,
+                    theme: 'grid',
+                    headStyles: { fillColor: [76, 81, 191] },
+                    styles: { fontSize: 8 },
+                    columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' } }
+                });
+                doc.save('KEAM_College_Ranks.pdf');
+                downloadDropdown.classList.remove('show');
+            });
+            
+            // Initial render
+            filterAndSortAndRender();
+        });
     </script>
 </body>
 </html>
